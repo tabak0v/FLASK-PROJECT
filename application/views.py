@@ -1,9 +1,10 @@
-from app import app, models, USERS, CONT
+from application import app, models, USERS, CONT
 from flask import request, Response, url_for
 import json
 from http import HTTPStatus
 import matplotlib.pyplot as plt
 import matplotlib
+
 
 
 @app.post("/users/create")
@@ -214,7 +215,7 @@ def create_leaderboard():
         else:
             return Response(status=HTTPStatus.NOT_FOUND)
     elif type == "graph":
-        matplotlib.use("agg")
+        matplotlib.use('agg')
         plt.plot(
             [f"{user.first_name} {user.last_name}" for user in USERS],
             [len(user.contests) for user in USERS],
@@ -222,7 +223,7 @@ def create_leaderboard():
         plt.xlabel(xlabel="участники")
         plt.ylabel(ylabel="Количество соревнований")
         plt.title("Графика пользователей по количеству соревнований")
-        plt.savefig("app/static/graph.png")
+        plt.savefig("application/static/graph.png")
         return Response(
             f"""<img src= "{url_for('static', filename='graph.png')}"> """,
             status=HTTPStatus.OK,

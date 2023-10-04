@@ -1,5 +1,5 @@
 import re
-from app import USERS, CONT
+from application import USERS, CONT
 
 
 class User:
