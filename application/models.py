@@ -13,15 +13,12 @@ class User:
 
     @staticmethod
     def is_valid_email(email):
-        if re.match(r"[^@]+@[^@]+\.[^@]+", email):
-            return True
-        return False
+        return re.match(r"[^@]+@[^@]+\.[^@]+", email)
+
 
     @staticmethod
     def is_valid_id(user_id):
-        if user_id < 0 or user_id >= len(USERS):
-            return False
-        return True
+        return not user_id < 0 or user_id >= len(USERS)
 
 
 class Contests:
@@ -36,11 +33,11 @@ class Contests:
     def start_competition(self):
         self.status = "STARTED"
 
-    def add_winner(self, winner):
-        self.winner = winner
-
     def finish_competition(self):
         self.status = "FINISHED"
+
+    def add_winner(self, winner):
+        self.winner = winner
 
     @staticmethod
     def is_valid_id(contest_id):
