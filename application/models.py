@@ -10,15 +10,19 @@ class User:
         self.email = email
         self.sport = sport
         self.contests = []
+        self.status = "created"
 
     @staticmethod
     def is_valid_email(email):
         return re.match(r"[^@]+@[^@]+\.[^@]+", email)
 
-
     @staticmethod
     def is_valid_id(user_id):
-        return not user_id < 0 or user_id >= len(USERS)
+        return 0 <= user_id < len(USERS) and USERS[user_id].status != "deleted"
+
+    @staticmethod
+    def is_valid_sport(user_id, sport):
+        return USERS[user_id].sport == sport
 
 
 class Contests:
@@ -41,6 +45,4 @@ class Contests:
 
     @staticmethod
     def is_valid_id(contest_id):
-        if contest_id < 0 or contest_id >= len(CONT):
-            return False
-        return True
+        return not contest_id < 0 or contest_id >= len(CONT)

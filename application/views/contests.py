@@ -15,8 +15,8 @@ def create_contest():
     contest.start_competition()
     # adding contests_id to user.contests and checking if users can participate in that competition
     for user_id in participants:
-        if USERS[user_id].sport != sport:
-            return Response(status=HTTPStatus.NOT_FOUND)
+        if not models.User.is_valid_sport(user_id, sport):
+            return Response(status=HTTPStatus.BAD_REQUEST)
         USERS[user_id].contests.append(contest_id)
 
     CONT.append(contest)

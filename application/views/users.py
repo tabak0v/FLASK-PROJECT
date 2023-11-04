@@ -23,7 +23,7 @@ def create_user():
             {
                 "id": user.id,
                 "first_name": user.first_name,
-                "last name": user.last_name,
+                "last_name": user.last_name,
                 "email": user.email,
                 "contests": user.contests,
             }
@@ -38,13 +38,13 @@ def create_user():
 def get_user(user_id):
     user = USERS[user_id]
     if not models.User.is_valid_id(user_id):
-        return Response(status=HTTPStatus.NOT_FOUND)
+        return Response(status=HTTPStatus.BAD_REQUEST)
     response = Response(
         json.dumps(
             {
                 "id": user.id,
                 "first_name": user.first_name,
-                "last name": user.last_name,
+                "last_name": user.last_name,
                 "email": user.email,
                 "contests": user.contests,
             }
@@ -87,7 +87,9 @@ def create_leaderboard():
     if type == "list":
         sort = data["sort"]
         if sort == "asc":
-            USERS_asc = USERS.copy()
+            USERS_asc = [
+                user for user in USERS.copy() if models.User.is_valid_id(user.id)
+            ]
             USERS_asc.sort(key=lambda x: len(x.contests))
             response = Response(
                 json.dumps(
@@ -109,7 +111,9 @@ def create_leaderboard():
             )
             return response
         elif sort == "desc":
-            USERS_desc = USERS.copy()
+            USERS_desc = [
+                user for user in USERS.copy() if models.User.is_valid_id(user.id)
+            ]
             USERS_desc.sort(key=lambda x: len(x.contests), reverse=True)
             response = Response(
                 json.dumps(
@@ -133,7 +137,7 @@ def create_leaderboard():
         else:
             return Response(status=HTTPStatus.NOT_FOUND)
     elif type == "graph":
-        matplotlib.use('agg')
+        matplotlib.use("agg")
         plt.plot(
             [f"{user.first_name} {user.last_name}" for user in USERS],
             [len(user.contests) for user in USERS],
@@ -149,3 +153,26 @@ def create_leaderboard():
         )
     else:
         return Response(status=HTTPStatus.NOT_FOUND)
+
+
+@app.delete("/users/<int:user_id>")
+def delete_user(user_id):
+    if not models.User.is_valid_id(user_id):
+        return Response(status=HTTPStatus.NOT_FOUND)
+    user = USERS[user_id]
+    user.status = "deleted"
+    response = Response(
+        json.dumps(
+            {
+                "id": user.id,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": user.email,
+                "contests": user.contests,
+                "status": user.status,
+            }
+        ),
+        HTTPStatus.OK,
+        mimetype="application.json",
+    )
+    return response
